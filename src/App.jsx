@@ -3,34 +3,69 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
 import AddTransaction from './components/AddTransaction';
 import AddIncome from './components/AddIncome';
+import Budget from './components/Budget';
+
 const App = () => {
   const [expenses, setExpenses] = useState([]);
-  const [income, setIncome] = useState([]); //add income state
+  const [income, setIncome] = useState([]);
+  const [budgets, setBudgets] = useState({
+    Food: 1000,
+    Travel: 2000,
+    Rent: 5000,
+    Shopping: 1500,
+    Other: 1000,
+  });
 
-  const addExpense = (expense) => { // Add new expense to the list it is state
+  const addExpense = (expense) => {
     setExpenses(prevExpenses => [...prevExpenses, expense]);
   };
-  const deleteExpense = (id) => { //keep only those expense whose id is not equal to the id to be deleted
+
+  const deleteExpense = (id) => {
     setExpenses(prevExpenses => prevExpenses.filter(expense => expense.id !== id));
   };
-  const addIncome = (income) => { //function to add income
-    setIncome(prevIncome => [...prevIncome, income]);
+
+  const addIncome = (incomeItem) => {
+    setIncome(prevIncome => [...prevIncome, incomeItem]);
   };  
-  const totalIncome = income.reduce((totalIncome, incomeItem) => totalIncome + incomeItem.amount, 0); //calculate total income
+
+  const totalIncome = income.reduce((total, item) => total + item.amount, 0);
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Dashboard expenses={expenses} deleteExpense={deleteExpense} income={income} totalIncome={totalIncome}  //data pass karn dashboard la
-           />} /> 
+        {/* Dashboard Route */}
+        <Route 
+          path="/" 
+          element={
+            <Dashboard 
+              expenses={expenses} 
+              deleteExpense={deleteExpense} 
+              income={income} 
+              totalIncome={totalIncome} 
+              budgets={budgets} 
+            />
+          } 
+        />
+
+        {/* Budget Route */}
+        <Route 
+          path="/budgets" 
+          element={
+            <Budget budgets={budgets} setBudgets={setBudgets} />
+          } 
+        />
+
+        {/* Add Transaction */}
         <Route
           path="/add-transaction"
           element={<AddTransaction addExpense={addExpense} />}
         />
-      <Route
-  path="/add-income"
-  element={<AddIncome addIncome={addIncome} />}
-/>
 
+        {/* Add Income */}
+        <Route
+          path="/add-income"
+          element={<AddIncome addIncome={addIncome} />}
+        />
       </Routes>
     </Router>
   );
